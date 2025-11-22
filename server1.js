@@ -44,7 +44,8 @@ console.log(url.pathname)
 
       const method = pathParts[1] || "";
       //const param = pathParts[2] || "";
-      const param = decodeURIComponent(pathParts[2]);
+      const param = "{"+decodeURIComponent(pathParts[2])+"}";
+
 
 
       // JSON RPC風に返す例
@@ -52,10 +53,10 @@ console.log(url.pathname)
         jsonrpc: "2.0",
         id: 0,
         method,
-        params: param
+        params: JSON.parse(param)
       };
 
-console.log("["+JSON.stringify(body)+"]")
+console.log(JSON.stringify(body))
 
       return new Response(JSON.stringify(body), {
         headers: { "Content-Type": "application/json" },
