@@ -5,8 +5,8 @@ serve({
   fetch: async (req) => {
     const url = new URL(req.url);
 
-      // パス: /hivemind/:method/:param
-      const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
+    // パス: /hivemind/:method/:param
+    const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
 
     // /hivemind/ に一致したときだけ処理
     if (url.pathname === "/hivemind/") {
@@ -17,6 +17,9 @@ serve({
         method: "hive.db_head_state",
         params: {}
       });
+
+const body_text = JSON.stringify(body)
+console.log(body_text)
 
       // backend に POST
       const backend = await fetch("http://steememory.com:8888", {
