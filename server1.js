@@ -35,6 +35,9 @@ serve({
       });
 
     } else if (url.pathname === "/method/") {
+
+console.log(url.pathname)
+
       // パス: /hivemind/:method/:param
       const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
       const method = pathParts[1] || "";
