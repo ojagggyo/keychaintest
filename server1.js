@@ -58,7 +58,7 @@ console.log(param_text)
         params: param
       };
 
-body_text = JSON.stringify(body)
+const body_text = JSON.stringify(body)
 console.log(body_text)
 
       //return new Response(JSON.stringify(body), {
