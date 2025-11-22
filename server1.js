@@ -72,7 +72,7 @@ console.log(body_text)
           "Content-Type": "application/json",
           "Host": "steememory.com",
         },
-        body: body_text,
+        body: body,
       });
 
 
