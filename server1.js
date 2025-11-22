@@ -5,6 +5,9 @@ serve({
   fetch: async (req) => {
     const url = new URL(req.url);
 
+      // パス: /hivemind/:method/:param
+      const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
+
     // /hivemind/ に一致したときだけ処理
     if (url.pathname === "/hivemind/") {
       // Nginx と同じ固定JSONボディ
@@ -34,12 +37,11 @@ serve({
         }
       });
 
-    } else if (url.pathname === "/method/") {
+    } else if (pathParts[0] === "/method/") {
 
 console.log(url.pathname)
 
-      // パス: /hivemind/:method/:param
-      const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
+
       const method = pathParts[1] || "";
       const param = pathParts[2] || "";
 
