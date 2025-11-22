@@ -19,7 +19,8 @@ serve({
       });
 
       // backend に POST
-      const backend = await fetch("http://172.100.0.4:8080/", {
+      //const backend = await fetch("http://172.100.0.4:8080/", {
+      const backend = await fetch("http://steememory.com:8888", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,9 +60,21 @@ console.log(jsonstring)
 
 console.log(JSON.stringify(body))
 
-      return new Response(JSON.stringify(body), {
-        headers: { "Content-Type": "application/json" },
+      //return new Response(JSON.stringify(body), {
+      //  headers: { "Content-Type": "application/json" },
+      //});
+
+      // backend に POST
+      const backend = await fetch("http://steememory.com:8888", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Host": "steememory.com",
+        },
+        body,
       });
+
+
     }
 
 
