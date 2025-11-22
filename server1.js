@@ -43,7 +43,11 @@ console.log(url.pathname)
 
       const method = pathParts[1] || "";
       //const param = pathParts[2] || "";
-      const param = JSON.parse("{"+decodeURIComponent(pathParts[2])+"}");
+      const jsonstring = "{"+decodeURIComponent(pathParts[2] || "")+"}";
+
+console.log(jsonstring)
+
+      const param = JSON.parse(jsonstring);
 
       // JSON RPC風に返す例
       const body = {
