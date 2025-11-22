@@ -18,8 +18,7 @@ serve({
         params: {}
       });
 
-const body_text = JSON.stringify(body)
-console.log(body_text)
+console.log(body)
 
       // backend に POST
       const backend = await fetch("http://steememory.com:8888", {
@@ -53,15 +52,14 @@ console.log(param_text)
       const param = JSON.parse(param_text);
 
       // JSON RPC風に返す例
-      const body = {
+      const body = JSON.stringify({
         jsonrpc: "2.0",
         id: 0,
         method,
         params: param
-      };
+      });
 
-const body_text = JSON.stringify(body)
-console.log(body_text)
+console.log(body)
 
       // backend に POST
       const backend = await fetch("http://steememory.com:8888", {
