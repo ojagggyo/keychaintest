@@ -33,7 +33,28 @@ serve({
           "Content-Type": "application/json"
         }
       });
+
+    } else if (url.pathname === "/method/") {
+      // パス: /hivemind/:method/:param
+      const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
+      const method = pathParts[1] || "";
+      const param = pathParts[2] || "";
+
+      // JSON RPC風に返す例
+      const body = {
+        jsonrpc: "2.0",
+        id: 0,
+        method,
+        params: param
+      };
+
+console.log("["+JSON.stringify(body)+"]")
+
+      return new Response(JSON.stringify(body), {
+        headers: { "Content-Type": "application/json" },
+      });
     }
+
 
     // 上記以外のパス
     return new Response("Not Found", { status: 404 });
