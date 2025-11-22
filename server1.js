@@ -3,6 +3,12 @@ import { serve } from "bun";
 function fixJsonKeys(text) {
   return text.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
 }
+function decodeUnicode(str) {
+  return str.replace(/\\u[\dA-F]{4}/gi, m => 
+    String.fromCharCode(parseInt(m.replace("\\u", ""), 16))
+  );
+}
+
 
 serve({
   port: 3000,
@@ -78,7 +84,7 @@ console.log(body)
 
       // backend のレスポンスをそのまま返す
       const data = await backend.text();
-      return new Response(JSON.parse(data), {
+      return new Response(decodeUnicode(data), {
         status: backend.status,
         headers: {
           "Content-Type": "application/json"
