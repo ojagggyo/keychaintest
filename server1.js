@@ -44,11 +44,11 @@ console.log(url.pathname)
 
       const method = pathParts[1] || "";
       //const param = pathParts[2] || "";
-      const jsonstring = "{"+decodeURIComponent(pathParts[2] || "")+"}";
 
-console.log(jsonstring)
+const param_text = "{"+decodeURIComponent(pathParts[2] || "")+"}";
+console.log(param_text)
 
-      const param = JSON.parse(jsonstring);
+      const param = JSON.parse(param_text);
 
       // JSON RPC風に返す例
       const body = {
@@ -58,7 +58,8 @@ console.log(jsonstring)
         params: param
       };
 
-console.log(JSON.stringify(body))
+body_text = JSON.stringify(body)
+console.log(body_text)
 
       //return new Response(JSON.stringify(body), {
       //  headers: { "Content-Type": "application/json" },
@@ -71,7 +72,7 @@ console.log(JSON.stringify(body))
           "Content-Type": "application/json",
           "Host": "steememory.com",
         },
-        body: JSON.stringify(body),
+        body: body_text,
       });
 
 
