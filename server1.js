@@ -37,7 +37,7 @@ serve({
         }
       });
 
-    } else if (pathParts[0] === "/method/") {
+    } else if (pathParts[0] === "method") {
 
 console.log(url.pathname)
 
