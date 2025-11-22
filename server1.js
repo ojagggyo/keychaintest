@@ -43,8 +43,8 @@ console.log(url.pathname)
 
 
       const method = pathParts[1] || "";
-      const param = decodeURIComponent(pathParts[2]) || "";
-
+      //const param = pathParts[2] || "";
+      const param = decodeURIComponent(pathParts[2]);
 
 
       // JSON RPC風に返す例
