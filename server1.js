@@ -71,7 +71,7 @@ console.log(JSON.stringify(body))
           "Content-Type": "application/json",
           "Host": "steememory.com",
         },
-        body,
+        body: JSON.stringify(body),
       });
 
 
