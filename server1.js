@@ -78,7 +78,7 @@ console.log(body)
 
       // backend のレスポンスをそのまま返す
       const data = await backend.text();
-      return new Response(data, {
+      return new Response(JSON.parse(data), {
         status: backend.status,
         headers: {
           "Content-Type": "application/json"
