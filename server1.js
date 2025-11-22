@@ -51,7 +51,7 @@ console.log(url.pathname)
       const x = pathParts[2] || "";
 console.log(x)      
 
-const param_text = fixJsonKeys("{"+decodeURIComponent(x)+"}");
+const param_text = fixJsonKeys(decodeURIComponent(x));
 console.log(param_text)
 
       const param = JSON.parse(param_text);
