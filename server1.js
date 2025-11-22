@@ -46,7 +46,7 @@ console.log(url.pathname)
       const method = pathParts[1] || "";
       //const param = pathParts[2] || "";
 
-const param_text = "{"+decodeURIComponent(pathParts[2] || "")+"}";
+const param_text = "{"+decodeURIComponent(pathParts[2])+"}";
 console.log(param_text)
 
       const param = JSON.parse(param_text);
