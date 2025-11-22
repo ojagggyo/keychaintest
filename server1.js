@@ -41,19 +41,16 @@ serve({
 
 console.log(url.pathname)
 
-
       const method = pathParts[1] || "";
       //const param = pathParts[2] || "";
-      const param = "{"+decodeURIComponent(pathParts[2])+"}";
-
-
+      const param = JSON.parse("{"+decodeURIComponent(pathParts[2])+"}");
 
       // JSON RPC風に返す例
       const body = {
         jsonrpc: "2.0",
         id: 0,
         method,
-        params: JSON.parse(param)
+        params: param
       };
 
 console.log(JSON.stringify(body))
