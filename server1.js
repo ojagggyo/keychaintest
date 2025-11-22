@@ -1,5 +1,9 @@
 import { serve } from "bun";
 
+function fixJsonKeys(text) {
+  return text.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+}
+
 serve({
   port: 3000,
   fetch: async (req) => {
@@ -46,7 +50,7 @@ console.log(url.pathname)
       const method = pathParts[1] || "";
       //const param = pathParts[2] || "";
 
-const param_text = "{"+decodeURIComponent(pathParts[2])+"}";
+const param_text = fixJsonKeys("{"+decodeURIComponent(pathParts[2])+"}");
 console.log(param_text)
 
       const param = JSON.parse(param_text);
