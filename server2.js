@@ -15,8 +15,12 @@ serve({
   fetch: async (req) => {
     const url = new URL(req.url);
 
+    //ログ
     const now = new Date().toISOString();
-    console.log(`[${now}]`, req.method, url.pathname);
+    const ip = req.remoteAddr?.address || 
+           req.headers.get("x-forwarded-for") || 
+           "unknown";
+    console.log(`[${now}] IP=${ip} METHOD=${req.method} PATH=${url.pathname}`);
 
     // パス: /hivemind/:method/:param
     const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
