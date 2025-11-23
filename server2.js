@@ -21,7 +21,7 @@ serve({
     const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
 
     // /hivemind/ に一致したときだけ処理
-    if (pathParts[0] === "hivemind") {
+    if (pathParts[0] === "api") {
     //} else if (pathParts[0] === "method") {
       const method = pathParts[1] || "";
       let s = pathParts[2] || "";
