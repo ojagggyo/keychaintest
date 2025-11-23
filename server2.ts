@@ -56,7 +56,7 @@ const server = Bun.serve({
     console.log("Headers:", Object.fromEntries(req.headers));
 
     const rawIP = server.requestIP(req);  // Bun からの実 IP
-    const ipv4 = toIPv4(rawIP);           // IPv4 形式に変換
+    const ipv4 = toIPv4(rawIP?.address);           // IPv4 形式に変換
 　　console.log(`[IP] raw: ${rawIP}, ipv4: ${ipv4}`);
 
     // パス: /hivemind/:method/:param
