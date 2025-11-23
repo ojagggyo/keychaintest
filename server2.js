@@ -24,9 +24,9 @@ serve({
     if (pathParts[0] === "hivemind") {
     //} else if (pathParts[0] === "method") {
       const method = pathParts[1] || "";
-      const x = pathParts[2] || "";
-      const param_text = fixJsonKeys(decodeURIComponent(x));
-      const param = JSON.parse(param_text);
+      let s = pathParts[2] || "";
+      s = fixJsonKeys(decodeURIComponent(s));
+      const param = JSON.parse(s);
 
       // JSON RPC風に返す例
       const body = JSON.stringify({
