@@ -44,7 +44,7 @@ serve({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Host": "steememory.com",
+          "Host": "api.steememory.com",
         },
         body,
       });
