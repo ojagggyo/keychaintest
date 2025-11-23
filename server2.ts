@@ -9,7 +9,7 @@ function decodeUnicode(str) {
   );
 }
 //IPアドレスを取得する
-function getClientIP(req: Request): string {
+function getClientIP(req: Request, server: Bun.Server): string {
     const remote = (req as any).remoteAddr;
     if (remote?.address) return remote.address;
 
@@ -21,6 +21,11 @@ function getClientIP(req: Request): string {
 
     const ip3 = req.headers.get("x-real-ip");
     if (ip3) return ip3;
+
+    const rawIP = server.requestIP(req)?.address;  // Bun からの実 IP
+    const ipv4 = toIPv4(rawIP);           // IPv4 形式に変換
+    //console.log(`[IP] raw: ${rawIP}, ipv4: ${ipv4}`);
+    if (ipv4) return ipv4;
 
     return "unknown";
 }
@@ -43,21 +48,16 @@ function toIPv4(ip: string | null | undefined): string {
   return ip;
 }
 
-
 const server = Bun.serve({
   port: 3000,
   fetch: async (req) => {
     const url = new URL(req.url);
 
     //ログ
-    const ip = getClientIP(req,);
+    const ip = getClientIP(req, server);
     const now = new Date().toISOString();
     console.log(`[${now}] IP=${ip} METHOD=${req.method} PATH=${url.pathname}`);
     console.log("Headers:", Object.fromEntries(req.headers));
-
-    const rawIP = server.requestIP(req);  // Bun からの実 IP
-    const ipv4 = toIPv4(rawIP?.address);           // IPv4 形式に変換
-　　console.log(`[IP] raw: ${rawIP}, ipv4: ${ipv4}`);
 
     // パス: /hivemind/:method/:param
     const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
