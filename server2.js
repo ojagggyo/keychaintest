@@ -14,10 +14,10 @@ serve({
   fetch: async (req) => {
     const url = new URL(req.url);
 
-    console.log(pathname);
+    console.log(url.pathname);
 
     // パス: /hivemind/:method/:param
-    const pathParts = url.c.split("/").filter(Boolean); // 空文字削除
+    const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
 
     // /hivemind/ に一致したときだけ処理
     if (url.pathname === "/hivemind/") {
