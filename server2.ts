@@ -78,7 +78,7 @@ const server = Bun.serve({
         params: param
       });
 
-      console.log(body)
+      console.log(`[${now}] body: `, body);
 
       // backend に POST
       //const backend = await fetch("http://steememory.com:8888", {
