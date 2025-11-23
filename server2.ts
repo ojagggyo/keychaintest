@@ -34,6 +34,7 @@ serve({
     const ip = getClientIP(req);
     const now = new Date().toISOString();
     console.log(`[${now}] IP=${ip} METHOD=${req.method} PATH=${url.pathname}`);
+    console.log("Headers:", Object.fromEntries(req.headers));
 
     // パス: /hivemind/:method/:param
     const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
