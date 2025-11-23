@@ -39,7 +39,8 @@ serve({
       console.log(body)
 
       // backend に POST
-      const backend = await fetch("http://steememory.com:8888", {
+      //const backend = await fetch("http://steememory.com:8888", {
+      const backend = await fetch("https://api.steememory.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
