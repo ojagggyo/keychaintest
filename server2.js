@@ -15,7 +15,8 @@ serve({
   fetch: async (req) => {
     const url = new URL(req.url);
 
-    console.log(url.pathname);
+    const now = new Date().toISOString();
+    console.log(`[${now}]`, req.method, url.pathname);
 
     // パス: /hivemind/:method/:param
     const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
