@@ -107,3 +107,4 @@ const server = Bun.serve({
 });
 
 console.log(`✅ Bun HTTP Server running on http://bun.steememory.com:${server.port}`);
+console.log(server.hostname);
