@@ -14,8 +14,10 @@ serve({
   fetch: async (req) => {
     const url = new URL(req.url);
 
+    console.log(pathname);
+
     // パス: /hivemind/:method/:param
-    const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
+    const pathParts = url.c.split("/").filter(Boolean); // 空文字削除
 
     // /hivemind/ に一致したときだけ処理
     if (url.pathname === "/hivemind/") {
@@ -23,7 +25,6 @@ serve({
       const method = pathParts[1] || "";
       const x = pathParts[2] || "";
       const param_text = fixJsonKeys(decodeURIComponent(x));
-      console.log(param_text)
       const param = JSON.parse(param_text);
 
       // JSON RPC風に返す例
