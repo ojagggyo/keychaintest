@@ -81,7 +81,6 @@ const server = Bun.serve({
       console.log(`[${now}] body: `, body);
 
       // backend に POST
-      //const backend = await fetch("http://steememory.com:8888", {
       const backend = await fetch("https://api.steememory.com", {
         method: "POST",
         headers: {
@@ -106,3 +105,5 @@ const server = Bun.serve({
     return new Response("bunbunbun: Not Found", { status: 404 });
   }
 });
+
+console.log(`✅ Bun HTTP Server running on http://bun.steememory.com:${server.port}`);
