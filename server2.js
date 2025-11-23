@@ -9,6 +9,7 @@ function decodeUnicode(str) {
   );
 }
 
+
 serve({
   port: 3000,
   fetch: async (req) => {
@@ -20,7 +21,7 @@ serve({
     const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
 
     // /hivemind/ に一致したときだけ処理
-    if (url.pathname === "/hivemind/") {
+    if (pathParts[0] === "hivemind") {
     //} else if (pathParts[0] === "method") {
       const method = pathParts[1] || "";
       const x = pathParts[2] || "";
@@ -47,6 +48,7 @@ serve({
         body,
       });
 
+      
       // backend のレスポンスをそのまま返す
       const data = await backend.text();
       return new Response(decodeUnicode(data), {
@@ -58,6 +60,6 @@ serve({
     }
 
     // 上記以外のパス
-    return new Response("Not Found", { status: 404 });
+    return new Response("bunbunbun: Not Found", { status: 404 });
   }
 });
