@@ -53,7 +53,6 @@ const server = Bun.serve({
   fetch: async (req) => {
     const url = new URL(req.url);
 
-    //ログ
     const ip = getClientIP(req, server);
     const now = new Date().toISOString();
     console.log(`[${now}] IP=${ip} METHOD=${req.method} PATH=${url.pathname}`);
@@ -84,12 +83,11 @@ const server = Bun.serve({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Host": "api.steememory.com",
+          //"Host": "api.steememory.com",
         },
         body,
       });
 
-      
       // backend のレスポンスをそのまま返す
       const data = await backend.text();
       return new Response(decodeUnicode(data), {
