@@ -9,6 +9,7 @@ COPY package.json .
 COPY index.ts .
 COPY index.html .
 COPY storage.html .
+COPY signatures.html .
 COPY ./certs/ ./certs/
 
 RUN apt-get update -y
