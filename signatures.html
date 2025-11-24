@@ -1,38 +1,36 @@
 <html>
-    <head>
+    <head></head>
+<body>
+<script>
 if(window.steem_keychain){
   // JSONの内容をコピー
-  const tx = '
-  {
-  "ref_block_num": 4935,
-  "ref_block_prefix": 1192429318,
-  "expiration": "2025-11-24T06:57:55",
-  "operations": [
-    ["transfer", {
-      "from": yasu.pal,
-      "to": yau.pal,
-      "amount": "0.000 STEEM",
-      "memo": test
-    }]
-  ],
-  "extensions": []
-}
+  const tx = '\
+    {\
+  "ref_block_num": 4935,\
+  "ref_block_prefix": 1192429318,\
+  "expiration": "2025-11-24T06:57:55",\
+  "operations": [\
+    ["transfer", {\
+      "from": yasu.pal,\
+      "to": yau.pal,\
+      "amount": "0.000 STEEM",\
+      "memo": test\
+    }]\
+  ],\
+  "extensions": []\
+}\
 ';
+steem_keychain.requestBroadcast(
+  "yasu.pal",
+  JSON.parse(tx),
+  "active",
+  function(res){
+    console.log(res);
+  }
+);
 
-  steem_keychain.requestCustomJson(
-    'yasu.pal',
-    'steem', // custom_json idはvoteやtransferの場合Keychain側で自動判定
-    'active', // 送金・投票は active/posting に応じて
-    JSON.stringify(tx),
-    '署名要求',
-    function(response){
-      if(response.success){
-        console.log('署名済みJSON:', response.result);
-      } else {
-        console.error('署名失敗', response);
-      }
-    }
-  );
 }
-</head>
+</script>
+
+</body>
 </html>
