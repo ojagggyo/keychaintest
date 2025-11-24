@@ -59,12 +59,11 @@ const server = Bun.serve({
     console.log(`[${now}] IP=${ip} METHOD=${req.method} PATH=${url.pathname}`);
     console.log(`[${now}] Headers: `, Object.fromEntries(req.headers));
 
-    // パス: /hivemind/:method/:param
+    // パス: /api/:method/:param
     const pathParts = url.pathname.split("/").filter(Boolean); // 空文字削除
 
-    // /hivemind/ に一致したときだけ処理
+    // /api/ に一致したときだけ処理
     if (pathParts[0] === "api") {
-    //} else if (pathParts[0] === "method") {
       const method = pathParts[1] || "";
       let s = pathParts[2] || "";
       s = fixJsonKeys(decodeURIComponent(s));
@@ -107,4 +106,3 @@ const server = Bun.serve({
 });
 
 console.log(`✅ Bun HTTP Server running on http://bun.steememory.com:${server.port}`);
-console.log(server.hostname);
