@@ -83,7 +83,6 @@ const server = Bun.serve({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          //"Host": "api.steememory.com",
         },
         body,
       });
