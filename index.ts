@@ -37,10 +37,10 @@ function test(message: string, signature: string): boolean {
 }
 
 // SSL 証明書と秘密鍵の確認
-//const keyPath = "./certs/privkey.pem";
-//const certPath = "./certs/fullchain.pem";
-const keyPath = "./certs/localhost.key";
-const certPath = "./certs/localhost.crt";
+const keyPath = "./certs/privkey.pem";
+const certPath = "./certs/fullchain.pem";
+//const keyPath = "./certs/localhost.key";
+//const certPath = "./certs/localhost.crt";
 if (!existsSync(keyPath) || !existsSync(certPath)) {
   console.error("SSL証明書または秘密鍵が見つかりません。");
   process.exit(1);
