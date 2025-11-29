@@ -1,72 +1,117 @@
 <html>
-    <head></head>
+<head>
+<meta charset="utf-8">
+<title>Steem 手動署名 & 送信ツール</title>
+</head>
 <body>
-<script>
 
- 
-if(window.steem_keychain){
-  // JSONの内容をコピー
+<h3>① 署名するトランザクション JSON</h3>
+<textarea id="tx" rows="15" cols="60"></textarea>
+<br><br>
 
-// steem_keychain.requestBroadcast(
-//   "usay",
-//   JSON.parse(tx),
-//   "active",
-//   function(res){
-//     console.log(res);
-//   }
-// );
+<button onclick="signTx()">② Keychain で署名する</button>
+<button onclick="broadcastTx()">③ RPC へ送信</button>
 
-}
-</script>
-<!---->
-<textarea id="myText" rows="15" cols="40" placeholder="複数行テキストを入力してください">
-</textarea>
-<br>
-<button onclick="signatureText()">署名</button>
-<br>
-<textarea id="result" rows="15" cols="40"></textarea>
+<h3>結果</h3>
+<textarea id="result" rows="20" cols="60"></textarea>
 
 <script>
-//トランザクションをバイナリ化 → SHA256 ハッシュを作成
-const resultEl = document.getElementById("result");
-async function getTxHash(transaction) {
-    const txString = JSON.stringify(transaction);
-    const encoder = new TextEncoder();
-    const data = encoder.encode(txString);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
+// -------------------------------------------
+// ① トランザクションの JSON → SHA256 ハッシュ
+// -------------------------------------------
+async function getTxHash(tx) {
+    const json = JSON.stringify(tx);
+    const data = new TextEncoder().encode(json);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return [...new Uint8Array(hash)]
+        .map(x => x.toString(16).padStart(2, "0"))
+        .join("");
 }
-async function signatureText() {
-  if (!window.steem_keychain) {
-    resultEl.textContent = "❌ Steem Keychain がインストールされていません。";
-    return;
-  }
-  
-  try {
-  message = document.getElementById("myText").value;
-  const transaction = JSON.parse(message)
 
-  // ② Keychain で署名を作成
-  steem_keychain.requestSignBuffer("usay", await getTxHash(transaction), "active", async (res) => {
-    if (!res.success) {
-      resultEl.textContent = "署名に失敗しました。";
-      return;
+// -------------------------------------------
+// ② Keychain 署名
+// -------------------------------------------
+let lastTx = null;      // JSON パース済みトランザクション
+let lastSignature = ""; // Keychain 署名結果
+
+async function signTx() {
+    const resultEl = document.getElementById("result");
+    const raw = document.getElementById("tx").value;
+
+    try {
+        lastTx = JSON.parse(raw);
+    } catch (e) {
+        resultEl.value = "❌ JSON parse error: " + e.message;
+        return;
     }
-    console.info(res);
-    console.info(res.success);
 
-    resultEl.textContent = res.result;
-  });
+    if (!window.steem_keychain) {
+        resultEl.value = "❌ Steem Keychain が見つかりません";
+        return;
+    }
 
+    const hash = await getTxHash(lastTx);
 
-  } catch (err) {
-    resultEl.textContent = `❌ Error: ${err.message}`;
-  }
+    steem_keychain.requestSignBuffer(
+        "usay",          // 署名するアカウント
+        hash,            // 署名対象データ
+        "active",        // active キーで署名
+        (res) => {
+            if (!res.success) {
+                resultEl.value = "❌ Keychain 署名失敗";
+                return;
+            }
+
+            lastSignature = res.result;
+            resultEl.value =
+                "✔ 署名成功\n" +
+                "signature: " + lastSignature + "\n";
+        }
+    );
 }
 
+
+// -------------------------------------------
+// ③ RPC 送信（signatures に署名を追加）
+// -------------------------------------------
+async function broadcastTx() {
+    const resultEl = document.getElementById("result");
+
+    if (!lastTx) {
+        resultEl.value = "❌ 先に署名してください";
+        return;
+    }
+    if (!lastSignature) {
+        resultEl.value = "❌ 署名がありません";
+        return;
+    }
+
+    // signatures に追加
+    lastTx.signatures = [lastSignature];
+
+    // RPC 用 JSON-RPC
+    const rpcBody = {
+        id: "0",
+        jsonrpc: "2.0",
+        method: "call",
+        params: [
+            "condenser_api",
+            "broadcast_transaction_synchronous",
+            [ lastTx ]
+        ]
+    };
+
+    // POST
+    const res = await fetch("https://api.steememory.com/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rpcBody)
+    });
+
+    const data = await res.text();
+    resultEl.value = "RPC Response:\n" + data;
+}
 </script>
-<!---->
+
 </body>
 </html>
