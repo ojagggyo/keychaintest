@@ -40,6 +40,7 @@ steem_keychain.requestBroadcast(
 <br>
 <button onclick="setText()">設定</button>
 <button onclick="showText()">表示</button>
+<button onclick="signatureText()">署名</button>
 
 <script>
 function showText() {
@@ -49,7 +50,7 @@ function showText() {
 function setText() {
     document.getElementById("myText").value = tx;
 }
-function signatureText() {
+async function signatureText() {
   if (!window.steem_keychain) {
     resultEl.textContent = "❌ Steem Keychain がインストールされていません。";
     return;
