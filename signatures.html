@@ -3,28 +3,12 @@
 <body>
 <script>
 
- const tx = `\
-{\
-  "ref_block_num": 4935,\
-  "ref_block_prefix": 1192429318,\
-  "expiration": "2025-11-24T06:57:55",\
-  "operations": [\
-    ["transfer", {\
-      "from": yasu.pal,\
-      "to": yau.pal,\
-      "amount": "0.000 STEEM",\
-      "memo": test\
-    }]\
-  ],\
-  "extensions": []\
-}\
-`;
-
+ 
 if(window.steem_keychain){
   // JSONの内容をコピー
 
 steem_keychain.requestBroadcast(
-  "yasu.pal",
+  "usay",
   JSON.parse(tx),
   "active",
   function(res){
@@ -38,18 +22,10 @@ steem_keychain.requestBroadcast(
 <textarea id="myText" rows="5" cols="40" placeholder="複数行テキストを入力してください">
 </textarea>
 <br>
-<button onclick="setText()">設定</button>
-<button onclick="showText()">表示</button>
 <button onclick="signatureText()">署名</button>
 
 <script>
-function showText() {
-    const text = document.getElementById("myText").value;
-    alert(text);
-}
-function setText() {
-    document.getElementById("myText").value = tx;
-}
+
 async function signatureText() {
   if (!window.steem_keychain) {
     resultEl.textContent = "❌ Steem Keychain がインストールされていません。";
@@ -59,7 +35,7 @@ async function signatureText() {
   message= document.getElementById("myText").value;
 
   // ② Keychain で署名を作成
-  steem_keychain.requestSignBuffer("yasu.pal", message, "Active", async (res) => {
+  steem_keychain.requestSignBuffer("usay", message, "Active", async (res) => {
     if (!res.success) {
       resultEl.textContent = "署名に失敗しました。";
       return;
