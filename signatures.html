@@ -28,6 +28,7 @@ if(window.steem_keychain){
 
 <script>
 //トランザクションをバイナリ化 → SHA256 ハッシュを作成
+const resultEl = document.getElementById("result");
 async function getTxHash(transaction) {
     const txString = JSON.stringify(transaction);
  console.info(txString);
@@ -47,6 +48,7 @@ async function signatureText() {
     return;
   }
   
+  try {
   message = document.getElementById("myText").value;
   const transaction = JSON.parse(message)
 
@@ -59,8 +61,13 @@ async function signatureText() {
     console.info(res);
     console.info(res.success);
 
-    document.getElementById("result").value = res.result;
+    resultEl.textContent = res.result;
   });
+
+
+  } catch (err) {
+    resultEl.textContent = `❌ Error: ${err.message}`;
+  }
 }
 
 </script>
