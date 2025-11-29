@@ -49,6 +49,29 @@ function showText() {
 function setText() {
     document.getElementById("myText").value = tx;
 }
+function signatureText() {
+  if (!window.steem_keychain) {
+    resultEl.textContent = "❌ Steem Keychain がインストールされていません。";
+    return;
+  }
+
+  tx = document.getElementById("myText").value
+
+  // ② Keychain で署名を作成
+  steem_keychain.requestSignBuffer("yasu.pal", ex, "Active", async (res) => {
+  if (!res.success) {
+    resultEl.textContent = "署名に失敗しました。";
+    return;
+  }
+
+  const signature = res.result;
+  const publicKey = res.publicKey;
+
+  console.info(res);
+  console.info(res.success);
+  console.info(signature);
+  console.info(publicKey);
+}
 </script>
 <!---->
 </body>
