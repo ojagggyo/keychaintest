@@ -30,8 +30,12 @@ if(window.steem_keychain){
 //トランザクションをバイナリ化 → SHA256 ハッシュを作成
 async function getTxHash(transaction) {
     const txString = JSON.stringify(transaction);
+ console.info(txString);
+
     const encoder = new TextEncoder();
     const data = encoder.encode(txString);
+ console.info(data);
+
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
@@ -42,13 +46,9 @@ async function signatureText() {
     resultEl.textContent = "❌ Steem Keychain がインストールされていません。";
     return;
   }
-
- 
   
-  message= document.getElementById("myText").value;
-  //document.getElementById("myText").value = message.replace(/[\r\n]/g, "");;
-
- const transaction = JSON.parse(message)
+  message = document.getElementById("myText").value;
+  const transaction = JSON.parse(message)
 
   // ② Keychain で署名を作成
   steem_keychain.requestSignBuffer("usay", getTxHash(transaction), "active", async (res) => {
