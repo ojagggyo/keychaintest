@@ -34,13 +34,28 @@ async function signatureText() {
     return;
   }
 
-
+ 
   
   message= document.getElementById("myText").value;
   document.getElementById("myText").value = message.replace(/[\r\n]/g, "");;
 
+  transaction = message;
+
+    // 2. トランザクションをバイナリ化 → SHA256 ハッシュを作成
+    // （簡易例として JSON を文字列化して SHA256 を作る）
+    const txString = JSON.stringify(transaction);
+    const encoder = new TextEncoder();
+    const data = encoder.encode(txString);
+
+    // Web Crypto で SHA256 ハッシュ
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+
+
   // ② Keychain で署名を作成
-  steem_keychain.requestSignBuffer("usay", message, "active", async (res) => {
+  steem_keychain.requestSignBuffer("usay", hashHex, "active", async (res) => {
     if (!res.success) {
       resultEl.textContent = "署名に失敗しました。";
       return;
