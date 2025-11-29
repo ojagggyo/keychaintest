@@ -1,44 +1,114 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Steem Keychain Signed Transaction Test</title>
+<title>Steem Tx Sign</title>
 </head>
 <body>
 
-<h3>Steem Keychain requestSignedTransaction テスト</h3>
-
-<textarea id="tx" rows="15" cols="50">
+<textarea id="tx" rows="15" cols="60">
 {
-  "ref_block_num": 4935,
-  "ref_block_prefix": 1192429318,
-  "expiration": "2025-11-30T12:00:00",
+  "ref_block_num": 23013,
+  "ref_block_prefix": 3847817478,
+  "expiration": "2025-11-29T11:30:47",
   "operations": [
-    [
-      "transfer",
-      {
-        "from": "youraccount",
-        "to": "destination",
-        "amount": "0.001 STEEM",
-        "memo": "test memo"
-      }
-    ]
+    ["transfer", {
+      "from": "usay",
+      "to": "usay",
+      "amount": "0.001 STEEM",
+      "memo": "test"
+    }]
   ],
   "extensions": []
 }
 </textarea>
 
 <br><br>
-<button onclick="signTx()">requestSignedTransaction で署名する</button>
+<button onclick="signTx()">署名する</button>
 
 <br><br>
-<textarea id="result" rows="15" cols="50" readonly></textarea>
+<textarea id="result" rows="15" cols="60"></textarea>
 
 <script>
+// ============= Steem バイナリエンコード =============
+function encodeVarInt(value) {
+    const bytes = [];
+    while (value >= 0x80) {
+        bytes.push((value & 0x7f) | 0x80);
+        value >>= 7;
+    }
+    bytes.push(value);
+    return bytes;
+}
+
+function encodeString(str) {
+    const enc = new TextEncoder().encode(str);
+    return [...encodeVarInt(enc.length), ...enc];
+}
+
+function encodeAsset(str) {
+    const [amountRaw, symbol] = str.split(" ");
+    const amount = parseFloat(amountRaw);
+    const precision = (amountRaw.split(".")[1] || "").length;
+    const number = Math.round(amount * Math.pow(10, precision));
+
+    const buf = [];
+    buf.push(...new Uint8Array(new Uint32Array([number]).buffer)); // amount
+    buf.push(precision); // precision
+
+    const symBytes = new TextEncoder().encode(symbol);
+    const symbolBuf = new Uint8Array(7);
+    symbolBuf.set(symBytes);
+
+    buf.push(...symbolBuf);
+    return buf;
+}
+
+function encodeOperation(op) {
+    const [type, data] = op;
+
+    if (type !== "transfer") throw "未対応の operation";
+
+    let out = [];
+    out.push(2); // transfer = op_type=2
+
+    out.push(...encodeString(data.from));
+    out.push(...encodeString(data.to));
+    out.push(...encodeAsset(data.amount));
+    out.push(...encodeString(data.memo));
+
+    return out;
+}
+
+function serializeTx(tx) {
+    let out = [];
+
+    out.push(...new Uint16Array([tx.ref_block_num])); // 2 bytes
+    out.push(...new Uint32Array([tx.ref_block_prefix])); // 4 bytes
+
+    out.push(...encodeString(tx.expiration)); // 実際は timestamp 4byte
+
+    out.push(1); // operations count
+    out.push(...encodeOperation(tx.operations[0]));
+
+    out.push(0); // extensions count
+
+    return new Uint8Array(out);
+}
+
+// ============= SHA256 =============
+async function sha256(bin) {
+    const hash = await crypto.subtle.digest("SHA-256", bin);
+    return Array.from(new Uint8Array(hash))
+        .map(x => x.toString(16).padStart(2, "0"))
+        .join("");
+}
+
+// ============= 署名処理 =============
 async function signTx() {
     const resultEl = document.getElementById("result");
 
     if (!window.steem_keychain) {
-        resultEl.value = "❌ Steem Keychain が見つかりません。ブラウザ拡張を有効にしてください。";
+        resultEl.value = "Keychainがありません";
         return;
     }
 
@@ -46,27 +116,20 @@ async function signTx() {
     try {
         tx = JSON.parse(document.getElementById("tx").value);
     } catch (e) {
-        resultEl.value = "❌ JSON パースエラー: " + e.message;
+        resultEl.value = "JSONエラー: " + e.message;
         return;
     }
 
-    // 操作者（from アカウント）を取得
-    const username = tx.operations[0][1].from;
+    // ① Tx → Steemバイナリ
+    const bin = serializeTx(tx);
 
-    steem_keychain.requestSignedTransaction(
-        username,
-        tx,
-        "active",
-        function (res) {
-            if (!res.success) {
-                resultEl.value = "❌ 署名失敗\n" + JSON.stringify(res, null, 2);
-                return;
-            }
+    // ② バイナリ SHA256
+    const hashHex = await sha256(bin);
 
-            // res.result は "signed transaction"（完全な署名トランザクション）
-            resultEl.value = "✔ 署名成功\n\n" + JSON.stringify(res.result, null, 2);
-        }
-    );
+    // ③ Keychain 署名
+    steem_keychain.requestSignBuffer("usay", hashHex, "active", (res) => {
+        resultEl.value = JSON.stringify(res, null, 2);
+    });
 }
 </script>
 
