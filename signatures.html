@@ -60,19 +60,21 @@ async function signatureText() {
 
   // ② Keychain で署名を作成
   steem_keychain.requestSignBuffer("yasu.pal", ex, "Active", async (res) => {
-  if (!res.success) {
-    resultEl.textContent = "署名に失敗しました。";
-    return;
-  }
+    if (!res.success) {
+      resultEl.textContent = "署名に失敗しました。";
+      return;
+    }
 
-  const signature = res.result;
-  const publicKey = res.publicKey;
+    const signature = res.result;
+    const publicKey = res.publicKey;
 
-  console.info(res);
-  console.info(res.success);
-  console.info(signature);
-  console.info(publicKey);
+    console.info(res);
+    console.info(res.success);
+    console.info(signature);
+    console.info(publicKey);
+  });
 }
+
 </script>
 <!---->
 </body>
