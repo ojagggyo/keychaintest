@@ -21,6 +21,7 @@ steem_keychain.requestBroadcast(
 <!---->
 <textarea id="myText" rows="5" cols="40" placeholder="複数行テキストを入力してください">
 </textarea>
+<textarea id="result" rows="5" cols="40"></textarea>
 <br>
 <button onclick="signatureText()">署名</button>
 
@@ -35,19 +36,15 @@ async function signatureText() {
   message= document.getElementById("myText").value;
 
   // ② Keychain で署名を作成
-  steem_keychain.requestSignBuffer("usay", message, "Active", async (res) => {
+  steem_keychain.signature("usay", message, "active", async (res) => {
     if (!res.success) {
       resultEl.textContent = "署名に失敗しました。";
       return;
     }
-
-    const signature = res.result;
-    const publicKey = res.publicKey;
-
     console.info(res);
     console.info(res.success);
-    console.info(signature);
-    console.info(publicKey);
+
+    document.getElementById("result").value = res.result;
   });
 }
 
