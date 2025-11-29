@@ -38,7 +38,7 @@ async function signatureText() {
   document.getElementById("myText").value = message.replace(/[\r\n]/g, "");;
 
   // ② Keychain で署名を作成
-  steem_keychain.s.requestSignBuffer("usay", message, "active", async (res) => {
+  steem_keychain.requestSignBuffer("usay", message, "active", async (res) => {
     if (!res.success) {
       resultEl.textContent = "署名に失敗しました。";
       return;
