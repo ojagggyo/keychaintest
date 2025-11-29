@@ -6,20 +6,6 @@
 <body>
 
 <textarea id="tx" rows="15" cols="60">
-{
-  "ref_block_num": 23013,
-  "ref_block_prefix": 3847817478,
-  "expiration": "2025-11-29T11:30:47",
-  "operations": [
-    ["transfer", {
-      "from": "usay",
-      "to": "usay",
-      "amount": "0.001 STEEM",
-      "memo": "test"
-    }]
-  ],
-  "extensions": []
-}
 </textarea>
 
 <br><br>
@@ -27,6 +13,8 @@
 
 <br><br>
 <textarea id="result" rows="15" cols="60"></textarea>
+<br><br>
+<textarea id="result2" rows="15" cols="60"></textarea>
 
 <script>
 // ============= Steem バイナリエンコード =============
@@ -115,6 +103,8 @@ async function signTx() {
     let tx;
     try {
         tx = JSON.parse(document.getElementById("tx").value);
+        document.getElementById("tx").value = JSON.stringify(tx);
+
     } catch (e) {
         resultEl.value = "JSONエラー: " + e.message;
         return;
@@ -129,7 +119,13 @@ async function signTx() {
     // ③ Keychain 署名
     steem_keychain.requestSignBuffer("usay", hashHex, "active", (res) => {
         resultEl.value = JSON.stringify(res, null, 2);
+
+        //const resultEl2 = document.getElementById("result2");
+        //resultEl.value  = `curl -d '{"id":"0","jsonrpc":"2.0","method":"call","params":["condenser_api","broadcast_transaction_synchronous",[` + JSON.stringify(tx, null, 2) + 
     });
+
+
+
 }
 </script>
 
