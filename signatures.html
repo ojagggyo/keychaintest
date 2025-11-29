@@ -56,10 +56,10 @@ async function signatureText() {
     return;
   }
 
-  tx = document.getElementById("myText").value
+  message= document.getElementById("myText").value;
 
   // ② Keychain で署名を作成
-  steem_keychain.requestSignBuffer("yasu.pal", ex, "Active", async (res) => {
+  steem_keychain.requestSignBuffer("yasu.pal", message, "Active", async (res) => {
     if (!res.success) {
       resultEl.textContent = "署名に失敗しました。";
       return;
