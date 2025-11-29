@@ -19,11 +19,12 @@ steem_keychain.requestBroadcast(
 }
 </script>
 <!---->
-<textarea id="myText" rows="5" cols="40" placeholder="複数行テキストを入力してください">
+<textarea id="myText" rows="15" cols="40" placeholder="複数行テキストを入力してください">
 </textarea>
-<textarea id="result" rows="5" cols="40"></textarea>
 <br>
 <button onclick="signatureText()">署名</button>
+<br>
+<textarea id="result" rows="15" cols="40"></textarea>
 
 <script>
 
@@ -34,9 +35,7 @@ async function signatureText() {
   }
 
   message= document.getElementById("myText").value;
-  message = message.replaceall("\n","");
-  document.getElementById("myText").value = message;
-
+  document.getElementById("myText").value = message.replace(/[\r\n]/g, "");;
 
   // ② Keychain で署名を作成
   steem_keychain.s.requestSignBuffer("usay", message, "active", async (res) => {
