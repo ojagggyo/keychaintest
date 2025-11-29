@@ -2,10 +2,9 @@
     <head></head>
 <body>
 <script>
-if(window.steem_keychain){
-  // JSONの内容をコピー
-  const tx = '\
-    {\
+
+ const tx = `\
+{\
   "ref_block_num": 4935,\
   "ref_block_prefix": 1192429318,\
   "expiration": "2025-11-24T06:57:55",\
@@ -19,7 +18,11 @@ if(window.steem_keychain){
   ],\
   "extensions": []\
 }\
-';
+`;
+
+if(window.steem_keychain){
+  // JSONの内容をコピー
+
 steem_keychain.requestBroadcast(
   "yasu.pal",
   JSON.parse(tx),
@@ -31,6 +34,22 @@ steem_keychain.requestBroadcast(
 
 }
 </script>
+<!---->
+<textarea id="myText" rows="5" cols="40" placeholder="複数行テキストを入力してください">
+</textarea>
+<br>
+<button onclick="setText()">設定</button>
+<button onclick="showText()">表示</button>
 
+<script>
+function showText() {
+    const text = document.getElementById("myText").value;
+    alert(text);
+}
+function setText() {
+    document.getElementById("myText").value = tx;
+}
+</script>
+<!---->
 </body>
 </html>
