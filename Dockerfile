@@ -10,6 +10,7 @@ COPY index.ts .
 COPY index.html .
 COPY storage.html .
 COPY signatures.html .
+COPY transfer.html .
 COPY ./certs/ ./certs/
 
 RUN apt-get update -y
