@@ -203,8 +203,8 @@ async function signTx() {
         resultEl.value = JSON.stringify(res, null, 2);
 
 
-        //tx.signatures = [res.result];
-        tx.signatures.push(res.result);
+        tx.signatures = [res.result];
+        //tx.signatures.push(res.result);
 
         document.getElementById("result2").value = JSON.stringify(res, null, 2);
 
