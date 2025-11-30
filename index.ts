@@ -103,6 +103,7 @@ Bun.serve({
       "/": (req) => new Response(Bun.file(`${import.meta.dir}/index.html`)),
       "/storage.html": (req) => new Response(Bun.file(`${import.meta.dir}/storage.html`)),
       "/signatures.html": (req) => new Response(Bun.file(`${import.meta.dir}/signatures.html`)),
+      "/transfer.html": (req) => new Response(Bun.file(`${import.meta.dir}/transfer.html`)),
     };
 
     // ルーティング
