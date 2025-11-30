@@ -6,51 +6,70 @@
     <title>Steem Keychain Vote Example</title>
 </head>
 <body>
-    <h1>Steem Keychain Vote Test</h1>
+<h1>Steem Keychain Vote Test</h1>
 
-    <div>
-        <label>あなたのアカウント（voter）:</label><br>
-        <input type="text" id="voter" placeholder="例: ozaki"><br><br>
+<!-- URL から author / permlink を自動抽出 -->
+<label>投稿URL（自動抽出）:</label><br>
+<input type="text" id="postUrl" placeholder="https://steemit.com/@author/permlink">
+<button onclick="extract()">抽出</button>
+<br><br>
 
-        <label>投稿の作者（author）:</label><br>
-        <input type="text" id="author" placeholder="例: alice"><br><br>
+<label>あなたのアカウント（voter）:</label><br>
+<input type="text" id="voter" placeholder="例: usay"><br><br>
 
-        <label>パーマリンク（permlink）:</label><br>
-        <input type="text" id="permlink" placeholder="例: my-post"><br><br>
+<label>投稿の作者（author）:</label><br>
+<input type="text" id="author" placeholder="例: mvchacin"><br><br>
 
-        <label>投票割合（weight）:</label><br>
-        <input type="number" id="weight" value="10000"> (10000 = 100%)<br><br>
+<label>パーマリンク（permlink）:</label><br>
+<input type="text" id="permlink" placeholder="例: the-diary-game-..."><br><br>
 
-        <button onclick="sendVote()">Vote</button>
-    </div>
+<label>投票割合（weight）:</label><br>
+<input type="number" id="weight" value="10000"> (10000 = 100%)<br><br>
 
-    <pre id="result" style="margin-top: 20px; background: #eee; padding: 10px;"></pre>
+<button onclick="sendVote()">Vote</button>
 
-    <script>
-        function sendVote() {
-            const voter = document.getElementById("voter").value;
-            const author = document.getElementById("author").value;
-            const permlink = document.getElementById("permlink").value;
-            const weight = parseInt(document.getElementById("weight").value, 10);
+<pre id="result" style="margin-top: 20px; background: #eee; padding: 10px;"></pre>
 
-            if (!window.steem_keychain) {
-                document.getElementById("result").textContent =
-                    "Steem Keychain がインストールされていません。";
-                return;
-            }
+<script>
+// Steemit URL から author/permlink を自動抽出
+function extract() {
+    const url = document.getElementById("postUrl").value.trim();
+    const match = url.match(/@([^\/]+)\/([^\/\?]+)/);
 
-            steem_keychain.requestVote(
-                voter,
-                author,
-                permlink,
-                weight,
-                function(response) {
-                    document.getElementById("result").textContent =
-                        JSON.stringify(response, null, 2);
-                }
-            );
+    if (!match) {
+        alert("URL から author と permlink を取得できません。");
+        return;
+    }
+
+    document.getElementById("author").value = match[1];
+    document.getElementById("permlink").value = match[2];
+}
+
+// Vote 実行
+function sendVote() {
+    const voter = document.getElementById("voter").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const permlink = document.getElementById("permlink").value.trim();
+    const weight = parseInt(document.getElementById("weight").value, 10);
+
+    if (!window.steem_keychain) {
+        document.getElementById("result").textContent =
+            "Steem Keychain がインストールされていません。";
+        return;
+    }
+
+    steem_keychain.requestVote(
+        voter,
+        author,
+        permlink,
+        weight,
+        function (response) {
+            document.getElementById("result").textContent =
+                JSON.stringify(response, null, 2);
         }
-    </script>
+    );
+}
+</script>
 
 </body>
 </html>
