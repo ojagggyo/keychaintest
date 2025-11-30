@@ -31,17 +31,13 @@ function sendTransfer() {
     const to = document.getElementById("to").value.trim();
     const amount = document.getElementById("amount").value.trim();
     const memo = document.getElementById("memo").value.trim();
-const key = "active";
-const currency = "STEEM";
 
-    // Keychain に送信リクエスト
-    steem_keychain.requestSendToken(
-        from,       // 送信元アカウント
-        to,         // 送信先アカウント
-        amount,     // 送金額 ("0.001 STEEM")
-        memo,       // メモ
-        key,   // 使用する鍵
-        currency,
+    steem_keychain.requestTransfer(
+    from,
+    from,
+    from,           // 金額
+    memo,        // メモ（任意）
+    "STEEM",          // または "SBD"
         function(response) {
             console.log(response);
             document.getElementById("result").textContent = JSON.stringify(response, null, 2);
