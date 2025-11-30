@@ -91,7 +91,9 @@ async function main() {
     console.log(  JSON.stringify(tx, null, 2));
     console.log("keychain_transfer.json を作成しました");
  
-    document.getElementById("tx").value = JSON.stringify(tx, null, 2);
+    //document.getElementById("tx").value = JSON.stringify(tx, null, 2);
+
+
 }
 
 main();
@@ -203,11 +205,14 @@ async function signTx() {
         resultEl.value = JSON.stringify(res, null, 2);
 
         tx.signatures = [res.result];
-        
-        document.getElementById("result2").value = JSON.stringify(tx, null, 2);
 
-        //const resultEl2 = document.getElementById("result2");
-        //resultEl.value  = `curl -d '{"id":"0","jsonrpc":"2.0","method":"call","params":["condenser_api","broadcast_transaction_synchronous",[` + JSON.stringify(tx, null, 2) + 
+        //document.getElementById("result2").value = JSON.stringify(tx, null, 2);
+
+
+            document.getElementById("tx").value = 
+            `curl -d '{"id":"0","jsonrpc":"2.0","method":"call","params":["condenser_api","broadcast_transaction_synchronous",[`
+            + JSON.stringify(tx, null, 2)
+            + `]]}' https://api.steememory.com`;
     });
 
 
