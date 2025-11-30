@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steem Keychain Vote Example</title>
+</head>
+<body>
+    <h1>Steem Keychain Vote Test</h1>
+
+    <div>
+        <label>あなたのアカウント（voter）:</label><br>
+        <input type="text" id="voter" placeholder="例: ozaki"><br><br>
+
+        <label>投稿の作者（author）:</label><br>
+        <input type="text" id="author" placeholder="例: alice"><br><br>
+
+        <label>パーマリンク（permlink）:</label><br>
+        <input type="text" id="permlink" placeholder="例: my-post"><br><br>
+
+        <label>投票割合（weight）:</label><br>
+        <input type="number" id="weight" value="10000"> (10000 = 100%)<br><br>
+
+        <button onclick="sendVote()">Vote</button>
+    </div>
+
+    <pre id="result" style="margin-top: 20px; background: #eee; padding: 10px;"></pre>
+
+    <script>
+        function sendVote() {
+            const voter = document.getElementById("voter").value;
+            const author = document.getElementById("author").value;
+            const permlink = document.getElementById("permlink").value;
+            const weight = parseInt(document.getElementById("weight").value, 10);
+
+            if (!window.steem_keychain) {
+                document.getElementById("result").textContent =
+                    "Steem Keychain がインストールされていません。";
+                return;
+            }
+
+            steem_keychain.requestVote(
+                voter,
+                author,
+                permlink,
+                weight,
+                function(response) {
+                    document.getElementById("result").textContent =
+                        JSON.stringify(response, null, 2);
+                }
+            );
+        }
+    </script>
+
+</body>
+</html>

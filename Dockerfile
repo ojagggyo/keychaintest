@@ -11,6 +11,7 @@ COPY index.html .
 COPY storage.html .
 COPY signatures.html .
 COPY transfer.html .
+COPY voting.html .
 COPY ./certs/ ./certs/
 
 RUN apt-get update -y

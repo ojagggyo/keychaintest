@@ -1,50 +1,53 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Steem Keychain Transfer</title>
+    <meta charset="UTF-8">
+    <title>Steem Keychain Transfer</title>
 </head>
+
 <body>
 
-<h2>Steem Keychain Transfer</h2>
+    <h2>Steem Keychain Transfer</h2>
 
-<label>送信元アカウント: </label><input type="text" id="from" value="usay"><br><br>
-<label>宛先アカウント: </label><input type="text" id="to" value="usay"><br><br>
-<label>金額 (STEEM/SP/STEEM POWER): </label><input type="text" id="amount" value="0.001"><br><br>
-<label>メモ: </label><input type="text" id="memo" value="test"><br><br>
+    <label>送信元アカウント: </label><input type="text" id="from" value="usay"><br><br>
+    <label>宛先アカウント: </label><input type="text" id="to" value="usay"><br><br>
+    <label>金額 (STEEM/SP/STEEM POWER): </label><input type="text" id="amount" value="0.001"><br><br>
+    <label>メモ: </label><input type="text" id="memo" value="test"><br><br>
 
-<button onclick="sendTransfer()">送信</button>
+    <button onclick="sendTransfer()">送信</button>
 
-<h3>結果</h3>
-<pre id="result"></pre>
+    <h3>結果</h3>
+    <pre id="result"></pre>
 
-<script>
-function sendTransfer() {
-    const resultEl = document.getElementById("result");
+    <script>
+        function sendTransfer() {
+            const resultEl = document.getElementById("result");
 
-    if (!window.steem_keychain) {
-        resultEl.textContent = "Steem Keychain がインストールされていません";
-        return;
-    }
+            if (!window.steem_keychain) {
+                resultEl.textContent = "Steem Keychain がインストールされていません";
+                return;
+            }
 
-    const from = document.getElementById("from").value.trim();
-    const to = document.getElementById("to").value.trim();
-    const amount = document.getElementById("amount").value.trim();
-    const memo = document.getElementById("memo").value.trim();
+            const from = document.getElementById("from").value.trim();
+            const to = document.getElementById("to").value.trim();
+            const amount = document.getElementById("amount").value.trim();
+            const memo = document.getElementById("memo").value.trim();
 
-    steem_keychain.requestTransfer(
-    from,
-    to,
-    amount,           // 金額
-    memo,        // メモ（任意）
-    "STEEM",          // または "SBD"
-        function(response) {
-            console.log(response);
-            document.getElementById("result").textContent = JSON.stringify(response, null, 2);
+            steem_keychain.requestTransfer(
+                from,
+                to,
+                amount,
+                memo,
+                "STEEM",
+                function (response) {
+                    console.log(response);
+                    document.getElementById("result").textContent = JSON.stringify(response, null, 2);
+                }
+            );
         }
-    );
-}
-</script>
+    </script>
 
 </body>
+
 </html>
