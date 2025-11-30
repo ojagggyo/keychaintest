@@ -33,18 +33,15 @@ function sendTransfer() {
     const memo = document.getElementById("memo").value.trim();
 
     // Keychain に送信リクエスト
-    steem_keychain.requestSignedTransaction(
-        {
-            type: "transfer",
-            from: from,
-            to: to,
-            amount: amount,
-            memo: memo,
-            key: "active"
-        },
+    steem_keychain.requestSendToken(
+        from,       // 送信元アカウント
+        to,         // 送信先アカウント
+        amount,     // 送金額 ("0.001 STEEM")
+        memo,       // メモ
+        "active",   // 使用する鍵
         function(response) {
-            // response には承認結果が返る
-            resultEl.textContent = JSON.stringify(response, null, 2);
+            console.log(response);
+            document.getElementById("result").textContent = JSON.stringify(response, null, 2);
         }
     );
 }
