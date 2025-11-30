@@ -31,6 +31,8 @@ function sendTransfer() {
     const to = document.getElementById("to").value.trim();
     const amount = document.getElementById("amount").value.trim();
     const memo = document.getElementById("memo").value.trim();
+const key = "active";
+const currency = "STEEM";
 
     // Keychain に送信リクエスト
     steem_keychain.requestSendToken(
@@ -38,7 +40,8 @@ function sendTransfer() {
         to,         // 送信先アカウント
         amount,     // 送金額 ("0.001 STEEM")
         memo,       // メモ
-        "active",   // 使用する鍵
+        key,   // 使用する鍵
+        currency,
         function(response) {
             console.log(response);
             document.getElementById("result").textContent = JSON.stringify(response, null, 2);
