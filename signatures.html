@@ -90,7 +90,8 @@ async function main() {
 
     console.log(  JSON.stringify(tx, null, 2));
     console.log("keychain_transfer.json を作成しました");
-  
+ 
+    document.getElementById("tx").value = JSON.stringify(tx, null, 2);
 }
 
 main();
@@ -200,6 +201,8 @@ async function signTx() {
     // ③ Keychain 署名
     steem_keychain.requestSignBuffer("usay", hashHex, "active", (res) => {
         resultEl.value = JSON.stringify(res, null, 2);
+
+        document.getElementById("result2").value = res.result;
 
         //const resultEl2 = document.getElementById("result2");
         //resultEl.value  = `curl -d '{"id":"0","jsonrpc":"2.0","method":"call","params":["condenser_api","broadcast_transaction_synchronous",[` + JSON.stringify(tx, null, 2) + 
