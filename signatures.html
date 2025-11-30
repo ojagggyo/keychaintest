@@ -17,6 +17,87 @@
 <textarea id="result2" rows="15" cols="60"></textarea>
 
 <script>
+// 最新ブロック情報取得
+async function getDynamicGlobalProperties() {
+  const res = await fetch("https://api.steememory.com", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "get_dynamic_global_properties",
+      params: [],
+      id: 1
+    })
+  });
+
+  const data = await res.json();
+  return data.result;
+}
+
+function calculateRefBlockPrefix(blockId) {
+  // block_id の先頭8文字（4バイト）を取り出す
+  const prefixHex = blockId.substring(0, 8);
+
+  // Little Endian に変換
+  const leHex =
+    prefixHex.substring(6, 8) +
+    prefixHex.substring(4, 6) +
+    prefixHex.substring(2, 4) +
+    prefixHex.substring(0, 2);
+
+  return parseInt(leHex, 16);
+}
+
+async function main() {
+  const props = await getDynamicGlobalProperties();
+
+  const head_block_number = props.head_block_number;
+  const head_block_id = props.head_block_id;
+
+  // Bash と同じ → 16bit にする
+  const ref_block_num = head_block_number & 0xFFFF;
+
+  // Bash と同じ Little Endian 計算
+  const ref_block_prefix = calculateRefBlockPrefix(head_block_id);
+
+  console.log("ref_block_num =", ref_block_num);
+  console.log("ref_block_prefix =", ref_block_prefix);
+
+  // JSON 作成（bash の keychain_transfer.json と同じ）
+  const tx = {
+    ref_block_num: ref_block_num,
+    ref_block_prefix: ref_block_prefix,
+    expiration: new Date(Date.now() + 2 * 60 * 1000)
+      .toISOString()
+      .split(".")[0], // bash の +%Y-%m-%dT%H:%M:%S と同じ
+    operations: [
+      [
+        "transfer",
+        {
+          from: "usay",
+          to: "usay",
+          amount: "0.001 STEEM",
+          memo: "test"
+        }
+      ]
+    ],
+    extensions: []
+  };
+
+  // ファイルに保存
+  //const fs = await import("fs");
+  //fs.writeFileSync("keychain_transfer.json", JSON.stringify(tx, null, 2));
+
+    console.log(  JSON.stringify(tx, null, 2));
+    console.log("keychain_transfer.json を作成しました");
+  
+}
+
+main();
+
+</script>
+
+<script>
 // ============= Steem バイナリエンコード =============
 function encodeVarInt(value) {
     const bytes = [];
