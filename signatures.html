@@ -202,10 +202,8 @@ async function signTx() {
     steem_keychain.requestSignBuffer("usay", hashHex, "active", (res) => {
         resultEl.value = JSON.stringify(res, null, 2);
 
-
         tx.signatures = [res.result];
-        //tx.signatures.push(res.result);
-
+        
         document.getElementById("result2").value = JSON.stringify(tx, null, 2);
 
         //const resultEl2 = document.getElementById("result2");
