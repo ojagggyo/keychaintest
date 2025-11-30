@@ -211,7 +211,7 @@ async function signTx() {
         //document.getElementById("result2").value = JSON.stringify(tx, null, 2);
 
 
-            document.getElementById("tx").value = 
+            document.getElementById("result2").value = 
             `curl -d '{"id":"0","jsonrpc":"2.0","method":"call","params":["condenser_api","broadcast_transaction_synchronous",[`
             + JSON.stringify(tx, null, 2)
             + `]]}' https://api.steememory.com`;
