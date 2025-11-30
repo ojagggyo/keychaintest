@@ -185,7 +185,7 @@ async function signTx() {
     let tx;
     try {
         tx = JSON.parse(document.getElementById("tx").value);
-        document.getElementById("tx").value = JSON.stringify(tx);
+        //document.getElementById("tx").value = JSON.stringify(tx);
 
     } catch (e) {
         resultEl.value = "JSONエラー: " + e.message;
@@ -206,7 +206,7 @@ async function signTx() {
         tx.signatures = [res.result];
         //tx.signatures.push(res.result);
 
-        document.getElementById("result2").value = JSON.stringify(res, null, 2);
+        document.getElementById("result2").value = JSON.stringify(tx, null, 2);
 
         //const resultEl2 = document.getElementById("result2");
         //resultEl.value  = `curl -d '{"id":"0","jsonrpc":"2.0","method":"call","params":["condenser_api","broadcast_transaction_synchronous",[` + JSON.stringify(tx, null, 2) + 
