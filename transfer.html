@@ -34,8 +34,8 @@ function sendTransfer() {
 
     steem_keychain.requestTransfer(
     from,
-    from,
-    from,           // 金額
+    to,
+    amount,           // 金額
     memo,        // メモ（任意）
     "STEEM",          // または "SBD"
         function(response) {
