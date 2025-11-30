@@ -114,7 +114,7 @@ Bun.serve({
 
     // 404 fallback
     return new Response("Not Found", { status: 404 });
-  },
+  }
 } as HttpsServeOptions);
 
 console.log("✅ Bun HTTPS Server running on https://bun.steememory.com");
