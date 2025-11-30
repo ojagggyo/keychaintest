@@ -29,7 +29,7 @@ async function sendTransfer() {
 
     const from = document.getElementById("from").value.trim();
     const to = document.getElementById("to").value.trim();
-    const amount = document.getElementById("amount").value.trim();
+    const amount = document.getElementById("amount").value.trim() + " STEEM";
     const memo = document.getElementById("memo").value.trim();
 
     // Keychain に送信リクエスト
@@ -38,7 +38,7 @@ async function sendTransfer() {
         to,
         amount,
         memo,
-        "STEEM",  // STEEM/SP/BHIVE など選べます
+        //"STEEM",  // STEEM/SP/BHIVE など選べます
         function(response) {
             // response には承認結果が返る
             resultEl.textContent = JSON.stringify(response, null, 2);
