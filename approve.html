@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Steem Keychain — 証人 (witness) 承認 (approve) サンプル</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif; padding: 24px; max-width:720px; margin:auto; }
+    label { display:block; margin-top:12px; }
+    input[type=text] { width:100%; padding:8px; font-size:14px }
+    button { margin-top:12px; padding:10px 14px; font-size:15px }
+    pre { background:#f7f7f7; padding:12px; border-radius:6px; overflow:auto }
+  </style>
+</head>
+<body>
+  <h1>Steem Keychain — 証人 (witness) 承認 (approve) サンプル</h1>
+  <p>このページは <strong>Steem Keychain</strong> がインストールされているブラウザで動作します。Posting 権限で署名されます。</p>
+
+  <label>あなたのアカウント名（voter）
+    <input id="account" type="text" placeholder="youraccount" value="" />
+  </label>
+
+  <label>証人のアカウント名（witness）
+    <input id="witness" type="text" placeholder="witnessname" value="" />
+  </label>
+
+  <label>
+    <input id="approve" type="checkbox" checked /> 承認 (チェック：approve = true / 未チェック：approve = false)
+  </label>
+
+  <button id="btn" onclick="voteWitness()">実行：証人に投票 / 取消</button>
+
+  <h3>レスポンス</h3>
+  <pre id="result">-</pre>
+
+  <script>
+    function show(msg) {
+      document.getElementById('result').textContent = (typeof msg === 'string') ? msg : JSON.stringify(msg, null, 2);
+    }
+
+    function voteWitness() {
+      const account = document.getElementById('account').value.trim();
+      const witness = document.getElementById('witness').value.trim();
+      const approve = document.getElementById('approve').checked; // true = approve, false = unapprove
+
+      if (!account || !witness) {
+        show('アカウント名と証人名を入力してください。');
+        return;
+      }
+
+      if (!window.steem_keychain) {
+        show('Steem Keychain が見つかりません。拡張機能をインストールして有効化してください。');
+        return;
+      }
+
+      // ブロックチェーンへ送る操作配列を作成
+      // op name は "account_witness_vote"、object のフィールドは { account, witness, approve }
+      const opArray = [
+        [
+          'account_witness_vote',
+          {
+            account: account,
+            witness: witness,
+            approve: approve
+          }
+        ]
+      ];
+
+      // 第1引数: 要求元アカウント（表示用）
+      // 第2引数: operations 配列
+      // 第3引数: 使用する権限（"Posting" を使います）
+      // 第4引数: コールバック
+      try {
+        window.steem_keychain.requestBroadcast(
+          account,
+          opArray,
+          'Posting',
+          function(response) {
+            // response は success フィールドなどを持つオブジェクト
+            show(response);
+          }
+        );
+      } catch (err) {
+        show('requestBroadcast 呼び出しで例外が発生しました: ' + err.message || err);
+      }
+    }
+  </script>
+
+  <hr />
+  <p>注意：</p>
+  <ul>
+    <li>このサンプルは <code>requestBroadcast</code> を使って Posting 権限で <code>account_witness_vote</code> を送信します。</li>
+    <li>ローカルで動作させる場合は静的サーバー（例: <code>python -m http.server</code>）で配信してください。拡張機能の仕様によっては file:// からの実行に制限があります。</li>
+    <li>実際に送信するとチェーン上で投票（または投票取消）が行われます。テスト目的ならテストネット／sandbox を使ってください。</li>
+  </ul>
+</body>
+</html>
