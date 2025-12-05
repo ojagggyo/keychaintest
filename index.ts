@@ -106,6 +106,7 @@ Bun.serve({
       "/transfer": (req) => new Response(Bun.file(`${import.meta.dir}/transfer.html`)),
       "/voting": (req) => new Response(Bun.file(`${import.meta.dir}/voting.html`)),
       "/approve": (req) => new Response(Bun.file(`${import.meta.dir}/approve.html`)),
+      "/proxy": (req) => new Response(Bun.file(`${import.meta.dir}/proxy.html`)),
       
     };
 
