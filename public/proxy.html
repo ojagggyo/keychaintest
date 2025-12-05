@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Steem Keychain — Witness Proxy 設定</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 24px; max-width:720px; margin:auto; }
+    label { display:block; margin-top:12px; }
+    input[type=text] { width:100%; padding:8px; font-size:14px }
+    button { margin-top:12px; padding:10px 14px; font-size:15px }
+    pre { background:#f7f7f7; padding:12px; border-radius:6px; overflow:auto }
+  </style>
+</head>
+<body>
+  <h1>Steem Keychain — Witness Proxy 設定</h1>
+  <p>あなたのアカウントの <strong>proxy</strong> を設定/解除するページです。Posting 権限で署名します。</p>
+
+  <label>あなたのアカウント名
+    <input id="account" type="text" placeholder="youraccount" />
+  </label>
+
+  <label>Proxy に設定したいアカウント名<br>
+    <input id="proxy" type="text" placeholder="proxy-account (空で解除)" />
+  </label>
+
+  <button onclick="setProxy()">Proxy を設定 / 解除</button>
+
+  <h3>レスポンス</h3>
+  <pre id="result">-</pre>
+
+<script>
+function show(msg) {
+  document.getElementById('result').textContent = (typeof msg === 'string') ? msg : JSON.stringify(msg, null, 2);
+}
+
+function setProxy() {
+  const account = document.getElementById('account').value.trim();
+  const proxy = document.getElementById('proxy').value.trim();
+
+  if (!account) {
+    show('アカウント名を入力してください');
+    return;
+  }
+
+  if (!window.steem_keychain) {
+    show('Steem Keychain が見つかりません');
+    return;
+  }
+
+  // proxy 設定の operations
+  // op 名: account_witness_proxy
+  // フィールド: { account, proxy }
+  const ops = [
+    [
+      'account_witness_proxy',
+      {
+        account: account,
+        proxy: proxy   // 空文字なら proxy 解除
+      }
+    ]
+  ];
+
+  window.steem_keychain.requestBroadcast(
+    account,
+    ops,
+    'Posting',
+    function(res) {
+      show(res);
+    }
+  );
+}
+</script>
+
+<hr>
+<ul>
+  <li>proxy を解除したい場合は <strong>proxy の欄を空欄</strong> にして実行してください。</li>
+  <li>実行するとチェーンに記録されます。テストの際は注意してください。</li>
+</ul>
+
+</body>
+</html>
