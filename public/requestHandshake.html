@@ -3,53 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <title>Steem Keychain Handshake Test</title>
+<style>
+body { font-family: monospace; white-space: pre-wrap; }
+#log { border: 1px solid #aaa; padding: 10px; margin-top: 20px; height: 350px; overflow-y: scroll; }
+</style>
 </head>
 <body>
-<h2>Steem Keychain requestHandshake Test</h2>
 
-<button onclick="doHandshake()">Handshake 実行</button>
+<h2>Steem Keychain handshake テスト</h2>
 
-<div id="log" style="margin-top:15px; font-family:monospace;"></div>
+<button id="btnHandshake">Handshake 実行</button>
+
+<div id="log"></div>
 
 <script>
-// ログ表示用
-function log(msg) {
-    document.getElementById("log").innerHTML += msg + "<br>";
+// ログ出力関数
+function addLog(msg) {
+    const logEl = document.getElementById("log");
+    logEl.textContent += msg + "\n";
+    logEl.scrollTop = logEl.scrollHeight;
 }
 
-// Handshake 実行
-function doHandshake() {
-    document.getElementById("log").innerHTML = "";
-    log("⏳ requestHandshake を送信…");
-
-    // Keychain が存在するか確認
-    if (!window.steem_keychain) {
-        log("❌ steem_keychain が見つかりません。拡張機能が無効か未インストールです。");
-        return;
+// Keychain の handshake 実行
+document.getElementById("btnHandshake").onclick = () => {
+    addLog("=== requestHandshake 実行 ===");
+    try {
+        steem_keychain.requestHandshake((response) => {
+            addLog("[callback 受信]: " + JSON.stringify(response));
+        });
+    } catch (e) {
+        addLog("[callback エラー発生]: " + e);
     }
+};
 
-    // requestHandshake（双方向通信テスト）
-    steem_keychain.requestHandshake(function (response) {
-        console.log(response); // 開発者ツールにも表示
-
-        if (response === undefined) {
-            log("⚠ callback 受信: undefined（拡張機能の古いバージョンの可能性あり）");
-            return;
-        }
-
-        if (response.success) {
-            log("✅ 双方向 handshake 成功");
-            log("message: " + response.message);
-
-            if (response.result) {
-                log("version: " + response.result.steem_keychain_version);
-                log("installed: " + response.result.installed);
-            }
-        } else {
-            log("❌ 失敗: " + response.message);
-        }
-    });
-}
+// window.postMessage で Keychain からのすべてのメッセージを受信
+window.addEventListener("message", (event) => {
+    addLog("[postMessage 受信]: " + JSON.stringify(event.data));
+});
 </script>
 
 </body>
