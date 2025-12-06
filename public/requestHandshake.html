@@ -24,14 +24,20 @@ document.getElementById("test").onclick = () => {
 
     out.textContent = "⏳ Handshake を送信中…";
 
-    // Handshake 実行
-    steem_keychain.requestHandshake()
-        .then((res) => {
-            out.textContent = "✅ Handshake 成功\n\n" + JSON.stringify(res, null, 2);
-        })
-        .catch((err) => {
-            out.textContent = "❌ Handshake 失敗\n\n" + JSON.stringify(err, null, 2);
-        });
+
+steem_keychain.requestHandshake((res) => {
+    out.textContent = "✅ callback Handshake 成功\n\n" + JSON.stringify(res, null, 2);
+});
+
+
+    // // Handshake 実行
+    // steem_keychain.requestHandshake()
+    //     .then((res) => {
+    //         out.textContent = "✅ Handshake 成功\n\n" + JSON.stringify(res, null, 2);
+    //     })
+    //     .catch((err) => {
+    //         out.textContent = "❌ Handshake 失敗\n\n" + JSON.stringify(err, null, 2);
+    //     });
 };
 </script>
 
