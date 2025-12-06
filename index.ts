@@ -108,6 +108,7 @@ Bun.serve({
       "/approve": (req) => new Response(Bun.file(`${import.meta.dir}/account_witness_vote.html`)),
       "/proxy": (req) => new Response(Bun.file(`${import.meta.dir}/account_witness_proxy.html`)),
       "/handshake": (req) => new Response(Bun.file(`${import.meta.dir}/requestHandshake.html`)),
+      "/version": (req) => new Response(Bun.file(`${import.meta.dir}/version.html`)),
       
       
     };

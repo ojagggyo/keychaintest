@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Steem Keychain バージョン確認</title>
+<style>
+  body{font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP"; padding:18px;}
+  button{padding:8px 12px; font-size:14px; cursor:pointer;}
+  pre{background:#f6f8fa;padding:10px;border-radius:6px;white-space:pre-wrap;}
+  .ok{color:green} .warn{color:orange} .err{color:#c00}
+</style>
+</head>
+<body>
+
+<h2>Steem Keychain バージョン確認ツール（v3/v4 両対応）</h2>
+
+<p>
+  <button id="checkBtn">Keychain バージョン確認</button>
+  <button id="clearBtn">ログ消去</button>
+</p>
+
+<pre id="log">起動しました。準備OK。</pre>
+
+<script>
+const logEl = document.getElementById('log');
+function log(...args){ logEl.textContent += "\\n" + args.join(' '); logEl.scrollTop = logEl.scrollHeight; }
+function clearLog(){ logEl.textContent = ''; }
+
+// 汎用的にレスポンスを解析してバージョン文字列を取り出す
+function extractVersionFromMsg(msg) {
+  if (!msg) return null;
+  // 可能性のあるフィールドを順に確認
+  if (msg.result && (msg.result.steem_keychain_version || msg.result.version)) {
+    return msg.result.steem_keychain_version || msg.result.version;
+  }
+  if (msg.steem_keychain_version) return msg.steem_keychain_version;
+  if (msg.version) return msg.version;
+  // 旧仕様かも：msg.msg / message / command
+  if (msg.msg && typeof msg.msg === 'string' && msg.msg.match(/\\d+\\.\\d+\\.\\d+/)) return msg.msg;
+  if (msg.message && typeof msg.message === 'string' && msg.message.match(/\\d+\\.\\d+\\.\\d+/)) return msg.message;
+  if (msg.command && typeof msg.command === 'string' && msg.command.match(/\\d+\\.\\d+\\.\\d+/)) return msg.command;
+  return null;
+}
+
+// window.postMessage で届く Keychain メッセージを受け取る（v3/v4 対応）
+window.addEventListener('message', (event) => {
+  try {
+    const d = event.data;
+    if (!d) return;
+    // v4 形式: type/keychain_response, または command/handshake 等の旧形式
+    if (d.type === 'keychain_response' || d.type === 'keychain_ready' || d.command === 'handshake' || d.command === 'keychain_ready') {
+      log('[postMessage] 受信: ' + JSON.stringify(d));
+      const ver = extractVersionFromMsg(d) || extractVersionFromMsg(d.result) || null;
+      if (ver) {
+        log('✅ Keychain version (postMessage): ' + ver);
+      } else {
+        log('⚠ postMessage からはバージョンが見つかりませんでした。データ全体を確認してください。');
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}, false);
+
+// 実際に requestHandshake を呼んで確認する主要ロジック
+async function checkKeychainVersion() {
+  clearLog();
+  log('開始: Keychain 存在チェック…');
+
+  if (!window.steem_keychain) {
+    log('❌ window.steem_keychain が見つかりません。拡張が未インストールか、ページ許可がありません。');
+    log('→ Chrome 拡張の「Websites」設定でこのサイトを許可するか、localhost 上で開いてください。');
+    return;
+  }
+
+  log('window.steem_keychain が検出されました。requestHandshake を送信します…');
+
+  let handled = false;
+
+  // レスポンスを一度に扱うための共通ハンドラ
+  function handleResponseLabel(source, resp) {
+    try {
+      log(`[${source}] 受信: ${JSON.stringify(resp)}`);
+      const ver = extractVersionFromMsg(resp);
+      if (ver) {
+        log('✅ Keychain version (' + source + '): ' + ver);
+      } else {
+        // 返ってきたオブジェクトに version 情報が無いケース
+        log('⚠ ' + source + ' ではバージョン情報が見つかりませんでした。レスポンスを確認してください。');
+      }
+      handled = true;
+    } catch (e) {
+      log('エラー: ' + e);
+    }
+  }
+
+  // 1) callback 方式（古い実装対応）
+  try {
+    const maybePromise = steem_keychain.requestHandshake(function (resp) {
+      // callback が undefined を受け取る古い実装もある
+      handleResponseLabel('callback', resp === undefined ? { info: 'callback returned undefined' } : resp);
+    });
+
+    // 2) Promise で返ってくる実装の対応
+    if (maybePromise && typeof maybePromise.then === 'function') {
+      maybePromise.then((resp) => {
+        handleResponseLabel('promise', resp);
+      }).catch((err) => {
+        log('[promise] エラー: ' + String(err));
+      });
+    }
+  } catch (e) {
+    log('requestHandshake 呼び出し例外: ' + e);
+  }
+
+  // 3) 一定時間待っても postMessage が来ない場合のフォールバック
+  //    （postMessage は window.addEventListener で受け取れる）
+  //    ここでは 2.5 秒待って結果がなければ案内する
+  await new Promise(resolve => setTimeout(resolve, 2500));
+
+  if (!handled) {
+    log('--- フォールバックチェック ---');
+    log('もし callback/promise で undefined が返る場合、postMessage の受信を確認してください。');
+    log('Keychain がロック中でないか、サイト権限が許可されているかを確認してください。');
+    log('ローカルファイル (file://) だと Keychain が応答しないことが多いです。');
+    log('推奨: このファイルをサーバーで配布し、http://localhost:8000/yourfile.html のように開いてください。');
+  }
+}
+
+// ボタン割当など
+document.getElementById('checkBtn').addEventListener('click', checkKeychainVersion);
+document.getElementById('clearBtn').addEventListener('click', clearLog);
+
+// 起動時の簡易表示
+log('注意: file:// では動作しない可能性があります。localhost での実行を推奨します。');
+log('テスト実行には「Keychain をアンロック」しておいてください（拡張のロックがある場合）。');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Steem Keychain Handshake Test</title>
+</head>
+<body>
+
+<h2>Steem Keychain Handshake Test</h2>
+<button id="test">Handshake 実行</button>
+
+<pre id="result"></pre>
+
+<script>
+const out = document.getElementById("result");
+
+// Keychain → ページへの返信を受け取る
+window.addEventListener("message", (event) => {
+    if (event.data && event.data.command === "handshake") {
+        out.textContent += "\n\n🟩 Keychain 応答:\n" +
+            JSON.stringify(event.data, null, 2);
+    }
+});
+
+document.getElementById("test").onclick = () => {
+
+    if (!window.steem_keychain) {
+        out.textContent = "❌ Keychain が見つかりません。";
+        return;
+    }
+
+    out.textContent = "⏳ Handshake を送信しました…";
+
+    // v3/v4 どちらでも OK（callback は res が undefined の場合あり）
+    steem_keychain.requestHandshake((res) => {
+        out.textContent += "\n\ncallback 受信: " + JSON.stringify(res, null, 2);
+    });
+};
+</script>
+
+</body>
+</html>
