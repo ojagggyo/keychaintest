@@ -103,10 +103,12 @@ Bun.serve({
       "/": (req) => new Response(Bun.file(`${import.meta.dir}/index.html`)),
       "/storage.html": (req) => new Response(Bun.file(`${import.meta.dir}/storage.html`)),
       "/signatures.html": (req) => new Response(Bun.file(`${import.meta.dir}/signatures.html`)),
-      "/transfer": (req) => new Response(Bun.file(`${import.meta.dir}/transfer.html`)),
-      "/voting": (req) => new Response(Bun.file(`${import.meta.dir}/voting.html`)),
-      "/approve": (req) => new Response(Bun.file(`${import.meta.dir}/approve.html`)),
-      "/proxy": (req) => new Response(Bun.file(`${import.meta.dir}/proxy.html`)),
+      "/transfer": (req) => new Response(Bun.file(`${import.meta.dir}/requestTransfer.html`)),
+      "/voting": (req) => new Response(Bun.file(`${import.meta.dir}/requestVote.html`)),
+      "/approve": (req) => new Response(Bun.file(`${import.meta.dir}/account_witness_vote.html`)),
+      "/proxy": (req) => new Response(Bun.file(`${import.meta.dir}/account_witness_proxy.html`)),
+      "/handshake": (req) => new Response(Bun.file(`${import.meta.dir}/requestHandshake.html`)),
+      
       
     };
 

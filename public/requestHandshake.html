@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Steem Keychain Handshake Test</title>
+</head>
+<body>
+
+<h2>Steem Keychain Handshake Test</h2>
+<button id="test">Handshake 実行</button>
+
+<pre id="result"></pre>
+
+<script>
+document.getElementById("test").onclick = () => {
+
+    const out = document.getElementById("result");
+
+    // Keychain がインストールされているか確認
+    if (!window.steem_keychain) {
+        out.textContent = "❌ Keychain が見つかりません (window.steem_keychain undefined)";
+        return;
+    }
+
+    out.textContent = "⏳ Handshake を送信中…";
+
+    // Handshake 実行
+    steem_keychain.requestHandshake()
+        .then((res) => {
+            out.textContent = "✅ Handshake 成功\n\n" + JSON.stringify(res, null, 2);
+        })
+        .catch((err) => {
+            out.textContent = "❌ Handshake 失敗\n\n" + JSON.stringify(err, null, 2);
+        });
+};
+</script>
+
+</body>
+</html>
