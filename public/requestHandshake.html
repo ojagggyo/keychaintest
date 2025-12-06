@@ -5,37 +5,51 @@
 <title>Steem Keychain Handshake Test</title>
 </head>
 <body>
+<h2>Steem Keychain requestHandshake Test</h2>
 
-<h2>Steem Keychain Handshake Test</h2>
-<button id="test">Handshake 実行</button>
+<button onclick="doHandshake()">Handshake 実行</button>
 
-<pre id="result"></pre>
+<div id="log" style="margin-top:15px; font-family:monospace;"></div>
 
 <script>
-const out = document.getElementById("result");
+// ログ表示用
+function log(msg) {
+    document.getElementById("log").innerHTML += msg + "<br>";
+}
 
-// Keychain → ページへの返信を受け取る
-window.addEventListener("message", (event) => {
-    if (event.data && event.data.command === "handshake") {
-        out.textContent += "\n\n🟩 Keychain 応答:\n" +
-            JSON.stringify(event.data, null, 2);
-    }
-});
+// Handshake 実行
+function doHandshake() {
+    document.getElementById("log").innerHTML = "";
+    log("⏳ requestHandshake を送信…");
 
-document.getElementById("test").onclick = () => {
-
+    // Keychain が存在するか確認
     if (!window.steem_keychain) {
-        out.textContent = "❌ Keychain が見つかりません。";
+        log("❌ steem_keychain が見つかりません。拡張機能が無効か未インストールです。");
         return;
     }
 
-    out.textContent = "⏳ Handshake を送信しました…";
+    // requestHandshake（双方向通信テスト）
+    steem_keychain.requestHandshake(function (response) {
+        console.log(response); // 開発者ツールにも表示
 
-    // v3/v4 どちらでも OK（callback は res が undefined の場合あり）
-    steem_keychain.requestHandshake((res) => {
-        out.textContent += "\n\ncallback 受信: " + JSON.stringify(res, null, 2);
+        if (response === undefined) {
+            log("⚠ callback 受信: undefined（拡張機能の古いバージョンの可能性あり）");
+            return;
+        }
+
+        if (response.success) {
+            log("✅ 双方向 handshake 成功");
+            log("message: " + response.message);
+
+            if (response.result) {
+                log("version: " + response.result.steem_keychain_version);
+                log("installed: " + response.result.installed);
+            }
+        } else {
+            log("❌ 失敗: " + response.message);
+        }
     });
-};
+}
 </script>
 
 </body>
