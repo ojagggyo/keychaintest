@@ -12,32 +12,29 @@
 <pre id="result"></pre>
 
 <script>
+const out = document.getElementById("result");
+
+// Keychain → ページへの返信を受け取る
+window.addEventListener("message", (event) => {
+    if (event.data && event.data.command === "handshake") {
+        out.textContent += "\n\n🟩 Keychain 応答:\n" +
+            JSON.stringify(event.data, null, 2);
+    }
+});
+
 document.getElementById("test").onclick = () => {
 
-    const out = document.getElementById("result");
-
-    // Keychain がインストールされているか確認
     if (!window.steem_keychain) {
-        out.textContent = "❌ Keychain が見つかりません (window.steem_keychain undefined)";
+        out.textContent = "❌ Keychain が見つかりません。";
         return;
     }
 
-    out.textContent = "⏳ Handshake を送信中…";
+    out.textContent = "⏳ Handshake を送信しました…";
 
-
-steem_keychain.requestHandshake((res) => {
-    out.textContent = "✅ callback Handshake 成功\n\n" + JSON.stringify(res, null, 2);
-});
-
-
-    // // Handshake 実行
-    // steem_keychain.requestHandshake()
-    //     .then((res) => {
-    //         out.textContent = "✅ Handshake 成功\n\n" + JSON.stringify(res, null, 2);
-    //     })
-    //     .catch((err) => {
-    //         out.textContent = "❌ Handshake 失敗\n\n" + JSON.stringify(err, null, 2);
-    //     });
+    // v3/v4 どちらでも OK（callback は res が undefined の場合あり）
+    steem_keychain.requestHandshake((res) => {
+        out.textContent += "\n\ncallback 受信: " + JSON.stringify(res, null, 2);
+    });
 };
 </script>
 
